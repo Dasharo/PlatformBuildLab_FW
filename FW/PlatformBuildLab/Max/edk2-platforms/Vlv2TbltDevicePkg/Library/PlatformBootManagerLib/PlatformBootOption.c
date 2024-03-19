@@ -15,8 +15,6 @@
 
 #include "PlatformBootManager.h"
 
-BOOLEAN    mContinueBoot  = FALSE;
-BOOLEAN    mUiAppBoot     = FALSE;
 BOOLEAN    mPxeBoot       = FALSE;
 BOOLEAN    mAnyKeypressed = FALSE;
 BOOLEAN    mHotKeypressed = FALSE;
@@ -517,9 +515,6 @@ RegisterDefaultBootOption (
   VOID
   )
 {
-  EFI_DEVICE_PATH_PROTOCOL           *DevicePath;
-  EFI_LOADED_IMAGE_PROTOCOL          *LoadedImage;
-  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH  FileNode;
   UINT16                             *ShellData;
   UINT32                             ShellDataSize; 
 
@@ -540,18 +535,6 @@ RegisterDefaultBootOption (
   if (mUiAppOptionNumber == LoadOptionNumberUnassigned) {
     DEBUG ((DEBUG_ERROR, "UiAppOptionNumber (%d) should not be same to LoadOptionNumberUnassigned(%d).\n", mUiAppOptionNumber, LoadOptionNumberUnassigned));
   }
- 
-  //
-  // Boot Manager Menu.
-  //
-  EfiInitializeFwVolDevicepathNode (&FileNode, &mBootMenuFile);
-
-  gBS->HandleProtocol (
-         gImageHandle,
-         &gEfiLoadedImageProtocolGuid,
-         (VOID **) &LoadedImage
-         );
-  DevicePath = AppendDevicePathNode (DevicePathFromHandle (LoadedImage->DeviceHandle), (EFI_DEVICE_PATH_PROTOCOL *) &FileNode);
 
 }
 
@@ -606,21 +589,16 @@ RegisterStaticHotkey (
   EFI_INPUT_KEY                 Enter;
   EFI_KEY_DATA                  F2;
   EFI_KEY_DATA                  F7;
-  BOOLEAN                       EnterSetup;
   EFI_STATUS                    Status;
   EFI_BOOT_MANAGER_LOAD_OPTION  BootOption;
 
-  EnterSetup = FALSE;
 
   //
   // [Enter]
   //
-  mContinueBoot = !EnterSetup;
-  if (mContinueBoot) {
-    Enter.ScanCode    = SCAN_NULL;
-    Enter.UnicodeChar = CHAR_CARRIAGE_RETURN;
-    EfiBootManagerRegisterContinueKeyOption (0, &Enter, NULL);
-  }
+  Enter.ScanCode    = SCAN_NULL;
+  Enter.UnicodeChar = CHAR_CARRIAGE_RETURN;
+  EfiBootManagerRegisterContinueKeyOption (0, &Enter, NULL);
 
   //
   // [F2]/[F7].
@@ -640,8 +618,7 @@ RegisterStaticHotkey (
   F2.Key.UnicodeChar = CHAR_NULL;
   F2.KeyState.KeyShiftState = EFI_SHIFT_STATE_VALID;
   F2.KeyState.KeyToggleState = 0;
-  mUiAppBoot  = !EnterSetup;
-  RegisterBootOptionHotkey ((UINT16) mUiAppOptionNumber, &F2.Key, mUiAppBoot);
+  RegisterBootOptionHotkey ((UINT16) mUiAppOptionNumber, &F2.Key, TRUE);
 }
 
 UINT8

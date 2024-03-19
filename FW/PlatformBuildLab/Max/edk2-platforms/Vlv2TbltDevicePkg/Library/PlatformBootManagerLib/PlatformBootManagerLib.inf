@@ -101,6 +101,7 @@
   gEfiVT100Guid
   gEfiVT100PlusGuid
   gEfiPcAnsiGuid
+  gEfiTtyTermGuid
   gEfiTpmDeviceInstanceTpm20DtpmGuid
   gTpmDeviceInstanceTpm20PttPtpGuid
   gEfiTcg2PhysicalPresenceGuid

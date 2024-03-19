@@ -78,8 +78,14 @@
   DEFINE   PLATFORM_PCIEXPRESS_BASE   = 0E0000000
 
   DEFINE SEC_ENABLE = TRUE
+!if $(TARGET) == RELEASE
+  DEFINE SEC_DEBUG_INFO_ENABLE = FALSE
+!endif
+!if $(TARGET) == DEBUG
   DEFINE SEC_DEBUG_INFO_ENABLE = TRUE
+!endif
   DEFINE FTPM_ENABLE = TRUE
+  DEFINE HTTP_BOOT_SUPPORT = TRUE
 
 ################################################################################
 #
@@ -736,6 +742,8 @@
 !endif
   gUefiCpuPkgTokenSpaceGuid.PcdCpuSmmApSyncTimeout|1000
 
+  gEfiMdePkgTokenSpaceGuid.PcdDefaultTerminalType|4
+
 [PcdsFixedAtBuild.X64]
 gEfiMdeModulePkgTokenSpaceGuid.PcdSystemRebootAfterCapsuleProcessFlag|0x0001
 
@@ -1048,6 +1056,7 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
       PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
+      HashLib|SecurityPkg/Library/HashLibBaseCryptoRouter/HashLibBaseCryptoRouterPei.inf
 }
 !endif
 

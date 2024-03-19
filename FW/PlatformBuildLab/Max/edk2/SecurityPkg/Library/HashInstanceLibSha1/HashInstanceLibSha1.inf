@@ -44,3 +44,4 @@
   Tpm2CommandLib
   MemoryAllocationLib
   BaseCryptLib
+  HashLib

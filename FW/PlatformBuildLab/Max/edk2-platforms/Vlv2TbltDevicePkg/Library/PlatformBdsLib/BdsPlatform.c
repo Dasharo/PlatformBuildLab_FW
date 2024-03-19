@@ -1,15 +1,24 @@
 /** @file
 
   Copyright (c) 2004  - 2018, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 
 
 Module Name:
@@ -2570,15 +2579,11 @@ ShowProgressHotKey (
     
   if (DebugAssertEnabled())
   {
-    DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it, or press <F2> or <DEL> to enter setup page! ...Zzz....\n"));
+    DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it, or press <F2> to enter setup page! ...Zzz....\n"));
   }
   else
   {  
-    #ifdef __GNUC__
-    SerialPortWrite((UINT8 *)"\n\n>>>>Start boot option, Press <F2> or <DEL> to enter setup page(5 Sec)[GCC]", 76);
-    #else
-    SerialPortWrite((UINT8 *)"\n\n>>>>Start boot option, Press <F2> or <DEL> to enter setup page(5 Sec)", 71);
-    #endif
+    SerialPortWrite((UINT8 *)"\n\n>>>>Start boot option, Press <F2> to enter setup page(5 Sec)", 71);
   } 
   SetMem (&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
   SetMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
@@ -2587,7 +2592,7 @@ ShowProgressHotKey (
   //
   // Clear the progress status bar first
   //
-  TmpStr = L"Start boot option, Press <F2> or <DEL> to enter setup page.";
+  TmpStr = L"Start boot option, Press <F2> to enter setup page.";
   PlatformBdsShowProgress (Foreground, Background, TmpStr, Color, 0, 0);
 
   TimeoutRemain = TimeoutDefault;

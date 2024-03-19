@@ -47,7 +47,8 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_GUID  *mLibTerminalType[] = {
   &gEfiPcAnsiGuid,
   &gEfiVT100Guid,
   &gEfiVT100PlusGuid,
-  &gEfiVTUTF8Guid
+  &gEfiVTUTF8Guid,
+  &gEfiTtyTermGuid
 };
 
 //
@@ -651,7 +652,6 @@ BootCurrentIsInternalShell (
   CHAR16                        BootOptionName[16];
   UINT8                         *BootOption;
   UINT8                         *Ptr;
-  EFI_DEVICE_PATH_PROTOCOL      *BootDevicePath;
   BOOLEAN                       Result;
   EFI_STATUS                    Status;
   EFI_DEVICE_PATH_PROTOCOL      *TempDevicePath;
@@ -659,7 +659,6 @@ BootCurrentIsInternalShell (
   EFI_GUID                      *GuidPoint;
 
   BootOption     = NULL;
-  BootDevicePath = NULL;
   Result         = FALSE;
 
   //
@@ -910,6 +909,7 @@ PlatformBootManagerBeforeConsole (
               //
               // Restoring default serial device path.
               //
+              CopyGuid (&((VENDOR_DEVICE_PATH *)Next)->Guid, TerminalGuid);
               EfiBootManagerUpdateConsoleVariable (ConIn, NULL, Instance);
               EfiBootManagerUpdateConsoleVariable (ConOut, NULL, Instance);
             }
