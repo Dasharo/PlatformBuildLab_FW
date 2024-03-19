@@ -252,9 +252,6 @@ $PLATFORM_PACKAGE/GenBiosId -i $CORE_PATH/Conf/BiosId.env -o $WORKSPACE/$BUILD_P
  echo  
 echo "Invoking EDK2 build..."
  echo "build " $JLog  -D $SDB -D $LG $QF 
- echo "Press ENTER to continue OR Control-C to abort"
- read
- echo build  $JLog  -D $SDB -D $LG $QF  
  build  $JLog  -D $SDB -D $LG $QF 
  echo command for build  $JLog -D $SDB -D $LG $QF
 
