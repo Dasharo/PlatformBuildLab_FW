@@ -127,6 +127,9 @@ for (( i=1; i<=$#; ))
     elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/X64" ]; then
       Arch=X64
       shift
+    elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/IA32" ]; then
+      Arch=IA32
+      shift
 
     elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/P3" ]; then
       TN=3

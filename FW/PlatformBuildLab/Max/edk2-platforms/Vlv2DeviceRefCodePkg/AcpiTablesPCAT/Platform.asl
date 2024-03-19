@@ -427,7 +427,7 @@ Scope(\_SB)
 
       // Check for a specific OS which supports _OSI.
 
-      If(CondRefOf(\_OSI,Local0))
+      If(CondRefOf(\_OSI))
       {
         // Linux returns _OSI = TRUE for numerous Windows
         // strings so that it is fully compatible with
