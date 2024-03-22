@@ -15,45 +15,62 @@
 #**/
 
 [Defines]
+!if $(BUILD_16M) == TRUE
+DEFINE FLASH_BASE       = 0xFF400000     #The base address of the 16Mb FLASH Device.
+DEFINE FLASH_SIZE       = 0x00C00000     #The flash size in bytes of the 16Mb FLASH Device.
+DEFINE FLASH_BLOCK_SIZE = 0x1000         #The block size in bytes of the 16Mb FLASH Device.
+DEFINE FLASH_NUM_BLOCKS = 0xC00          #The number of blocks in 16Mb FLASH Device.
+DEFINE BIOS_OFFSET      = 0x00800000     #Offset to the 4MB BIOS region for 16M build
+
+DEFINE FLASH_AREA_BASE_ADDRESS                                = 0xFF000000
+DEFINE FLASH_AREA_SIZE                                        = 0x01000000
+!else
 DEFINE FLASH_BASE       = 0xFFC00000     #The base address of the 4Mb FLASH Device.
 DEFINE FLASH_SIZE       = 0x00400000     #The flash size in bytes of the 4Mb FLASH Device.
-DEFINE FLASH_BLOCK_SIZE = 0x1000        #The block size in bytes of the 4Mb FLASH Device.
-DEFINE FLASH_NUM_BLOCKS = 0x400           #The number of blocks in 4Mb FLASH Device.
+DEFINE FLASH_BLOCK_SIZE = 0x1000         #The block size in bytes of the 4Mb FLASH Device.
+DEFINE FLASH_NUM_BLOCKS = 0x400          #The number of blocks in 4Mb FLASH Device.
+DEFINE BIOS_OFFSET      = 0x00000000     #Offset to the 4MB BIOS region for 8M build
+
 DEFINE FLASH_AREA_BASE_ADDRESS                                = 0xFF800000
 DEFINE FLASH_AREA_SIZE                                        = 0x00800000
+!endif
 
-DEFINE FLASH_REGION_VLVMICROCODE_OFFSET                       = 0x00000000 
+DEFINE FLASH_REGION_TXE_TOOLS_OFFSET                          = 0x00000000
+DEFINE FLASH_REGION_TXE_TOOLS_SIZE                            = 0x00800000
+DEFINE FLASH_REGION_TXE_TOOLS_BASE                            = 0xFF400000
+
+DEFINE FLASH_REGION_VLVMICROCODE_OFFSET                       = 0x00000000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_VLVMICROCODE_SIZE                         = 0x00040000
 DEFINE FLASH_REGION_VLVMICROCODE_BASE                         = 0xFFC00000
 
-DEFINE FLASH_REGION_VPD_OFFSET                                = 0x00040000
+DEFINE FLASH_REGION_VPD_OFFSET                                = 0x00040000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_VPD_SIZE                                  = 0x0003E000
 
-DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_WORKING_OFFSET = 0x0007E000
+DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_WORKING_OFFSET = 0x0007E000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_WORKING_SIZE   = 0x00002000
 
-
-DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_SPARE_OFFSET   = 0x00080000
+DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_SPARE_OFFSET   = 0x00080000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_NVSTORAGE_SUBREGION_NV_FTW_SPARE_SIZE     = 0x00040000
 
 !if $(MINNOW2_FSP_BUILD) == TRUE
-DEFINE FLASH_REGION_FSPBIN_OFFSET                             = 0x000C0000
+DEFINE FLASH_REGION_FSPBIN_OFFSET                             = 0x000C0000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_FSPBIN_SIZE                               = 0x00048000
 DEFINE FLASH_REGION_FSPBIN_BASE                               = 0xFFCC0000
 
-DEFINE FLASH_REGION_AZALIABIN_OFFSET                          = 0x00108000
+DEFINE FLASH_REGION_AZALIABIN_OFFSET                          = 0x00108000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_AZALIABIN_SIZE                            = 0x00008000
 DEFINE FLASH_REGION_AZALIABIN_BASE                            = 0xFFD08000
 
 !endif
 
-DEFINE FLASH_REGION_FVMAIN_OFFSET                             = 0x00110000
-DEFINE FLASH_REGION_FVMAIN_SIZE                               = 0x00215000
+DEFINE FLASH_REGION_FVMAIN_BASE                               = 0xFFD10000
+DEFINE FLASH_REGION_FVMAIN_OFFSET                             = 0x00110000 + $(BIOS_OFFSET)
+DEFINE FLASH_REGION_FVMAIN_SIZE                               = 0x00228000
 
-DEFINE FLASH_REGION_FV_RECOVERY2_OFFSET                       = 0x00325000
-DEFINE FLASH_REGION_FV_RECOVERY2_SIZE                         = 0x0006B000
+DEFINE FLASH_REGION_FV_RECOVERY2_OFFSET                       = 0x00338000 + $(BIOS_OFFSET)
+DEFINE FLASH_REGION_FV_RECOVERY2_SIZE                         = 0x00058000
  
-DEFINE FLASH_REGION_FV_RECOVERY_OFFSET                        = 0x00390000
+DEFINE FLASH_REGION_FV_RECOVERY_OFFSET                        = 0x00390000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_FV_RECOVERY_SIZE                          = 0x00070000
 
 ################################################################################
@@ -69,18 +86,28 @@ DEFINE FLASH_REGION_FV_RECOVERY_SIZE                          = 0x00070000
 # existing system flash.
 #
 ################################################################################
+
 [FD.Vlv]
-BaseAddress   = $(FLASH_BASE)|gPlatformModuleTokenSpaceGuid.PcdBiosImageBase #The base address of the 3Mb FLASH Device.
-Size          = $(FLASH_SIZE)|gPlatformModuleTokenSpaceGuid.PcdBiosImageSize        #The flash size in bytes of the 3Mb FLASH Device.
+BaseAddress   = $(FLASH_BASE)|gPlatformModuleTokenSpaceGuid.PcdBiosImageBase #The base address of the FLASH Device.
+Size          = $(FLASH_SIZE)|gPlatformModuleTokenSpaceGuid.PcdBiosImageSize #The flash size in bytes of the FLASH Device.
 ErasePolarity = 1
-BlockSize     = $(FLASH_BLOCK_SIZE)          #The block size in bytes of the 3Mb FLASH Device.
-NumBlocks     = $(FLASH_NUM_BLOCKS)          #The number of blocks in 3Mb FLASH Device.
+BlockSize     = $(FLASH_BLOCK_SIZE)          #The block size in bytes of the FLASH Device.
+NumBlocks     = $(FLASH_NUM_BLOCKS)          #The number of blocks in FLASH Device.
 
 #
 #Flash location override based on actual flash map
 #
 SET gPlatformModuleTokenSpaceGuid.PcdFlashAreaBaseAddress            = $(FLASH_AREA_BASE_ADDRESS)
 SET gPlatformModuleTokenSpaceGuid.PcdFlashAreaSize                   = $(FLASH_AREA_SIZE)
+
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvMainBase                 = $(FLASH_REGION_FVMAIN_BASE)
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvMainSize                 = $(FLASH_REGION_FVMAIN_SIZE)
+
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvRecovery2Base            = $(FLASH_REGION_FV_RECOVERY2_OFFSET)
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvRecovery2Size            = $(FLASH_REGION_FV_RECOVERY2_SIZE)
+
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoveryBase             = $(FLASH_REGION_FV_RECOVERY_OFFSET)
+SET gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoverySize             = $(FLASH_REGION_FV_RECOVERY_SIZE)
 
 !if $(MINNOW2_FSP_BUILD) == TRUE
 # put below PCD value setting into dsc file
@@ -114,9 +141,16 @@ SET gPlatformModuleTokenSpaceGuid.PcdFlashAreaSize                   = $(FLASH_A
 # Please note that we MUST update the binary once the default value is changed. 
 
 #
-  # CPU Microcodes
-  #
-
+# TXE Tools
+#
+!if $(BUILD_16M) == TRUE
+$(FLASH_REGION_TXE_TOOLS_OFFSET)|$(FLASH_REGION_TXE_TOOLS_SIZE)
+gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsBase|gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsSize
+FV = TXE_TOOLS_COMPACT_FV
+!endif
+#
+# CPU Microcodes
+#
 $(FLASH_REGION_VLVMICROCODE_OFFSET)|$(FLASH_REGION_VLVMICROCODE_SIZE)
 gPlatformModuleTokenSpaceGuid.PcdFlashMicroCodeAddress|gPlatformModuleTokenSpaceGuid.PcdFlashMicroCodeSize
 FV = MICROCODE_FV
@@ -166,6 +200,82 @@ $(FLASH_REGION_FV_RECOVERY_OFFSET)|$(FLASH_REGION_FV_RECOVERY_SIZE)
 gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoveryBase|gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoverySize
 FV = FVRECOVERY
 
+!if $(BUILD_16M) == TRUE
+[FV.TXE_TOOLS_FV]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+FILE APPLICATION = 549A9B73-1861-42BE-99B2-9B12D83C9813 {
+  SECTION PE32 = Vlv2MiscBinariesPkg/SEC/$(DXE_ARCHITECTURE)/TXEInfo.efi
+  SECTION UI = "TxeInfo"
+}
+
+FILE APPLICATION = EB6950E5-084F-4B3A-8BE8-1766C3D168D4 {
+  SECTION PE32 = Vlv2MiscBinariesPkg/SEC/$(DXE_ARCHITECTURE)/fpt.efi
+  SECTION UI = "FPT"
+}
+
+FILE FREEFORM = 1E0E3996-F088-40C4-9DC5-8ACE5C6648F4 {
+  SECTION RAW = Vlv2MiscBinariesPkg/SEC/$(DXE_ARCHITECTURE)/fparts.txt
+  SECTION UI = "fparts.txt"
+}
+
+[FV.TXE_TOOLS_COMPACT_FV]
+BlockSize          = $(FLASH_BLOCK_SIZE)
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+FILE FV_IMAGE = E578B38C-E33E-431F-AA12-D69716A3564D {
+!if $(LZMA_ENABLE) == TRUE
+# LZMA Compress
+       SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+          SECTION FV_IMAGE = TXE_TOOLS_FV
+       }
+!else
+!if $(DXE_COMPRESS_ENABLE) == TRUE
+# Tiano Compress
+       SECTION GUIDED A31280AD-481E-41B6-95E8-127F4C984779 PROCESSING_REQUIRED = TRUE {
+          SECTION FV_IMAGE = TXE_TOOLS_FV
+       }
+!else
+# No Compress
+       SECTION COMPRESS PI_NONE {
+          SECTION FV_IMAGE = TXE_TOOLS_FV
+       }
+!endif
+!endif
+     }
+
+!endif
 ################################################################################
 #
 # FV Section
@@ -247,12 +357,12 @@ INF EdkCompatibilityPkg/Compatibility/AcpiVariableHobOnSmramReserveHobThunk/Acpi
 
 INF UefiCpuPkg/PiSmmCommunication/PiSmmCommunicationPei.inf
 !if $(TPM_ENABLED) == TRUE
-INF SecurityPkg/Tcg/TrEEConfig/TrEEConfigPei.inf
+INF SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigPei.inf
 INF SecurityPkg/Tcg/TcgPei/TcgPei.inf
 INF SecurityPkg/Tcg/PhysicalPresencePei/PhysicalPresencePei.inf
 !endif
 !if $(FTPM_ENABLE) == TRUE
-INF  SecurityPkg/Tcg/TrEEPei/TrEEPei.inf #use PCD config
+INF SecurityPkg/Tcg/Tcg2Pei/Tcg2Pei.inf #use PCD config
 !endif
 INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 
@@ -401,6 +511,7 @@ INF MdeModulePkg/Application/UiApp/UiApp.inf
 !else
 INF IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 !endif
+INF MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf
 INF MdeModulePkg/Universal/LoadFileOnFv2/LoadFileOnFv2.inf
 INF MdeModulePkg/Universal/SmmCommunicationBufferDxe/SmmCommunicationBufferDxe.inf
 INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
@@ -489,7 +600,8 @@ INF RuleOverride = BINARY $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET
 INF RuleOverride = BINARY $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/Tpm2DeviceSeCDxe.inf
 INF SecurityPkg/Tcg/MemoryOverwriteControl/TcgMor.inf
 INF SecurityPkg/Tcg/MemoryOverwriteRequestControlLock/TcgMorLockSmm.inf
-INF SecurityPkg/Tcg/TrEEDxe/TrEEDxe.inf
+INF SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf
+INF SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigDxe.inf
 INF RuleOverride = BINARY $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/FtpmSmm.inf
 !endif
 
@@ -646,24 +758,25 @@ FILE DRIVER = 961578FE-B6B7-44c3-AF35-6BC705CD2B1F {
 #
 # UEFI Shell
 #
+!if $(BUILD_NEW_SHELL) == TRUE
+  INF  ShellPkg/Application/Shell/Shell.inf
+!else
 !if $(HTTP_BOOT_SUPPORT) == TRUE
 FILE APPLICATION = 7C04A583-9E3E-4f1c-AD65-E05268D0B4D1 {
-#    SECTION PE32 = EdkShellBinPkg/FullShell/$(EDK_DXE_ARCHITECTURE)/Shell_Full.efi
-    SECTION PE32 = ShellBinPkg/UefiShell/$(EDK_DXE_ARCHITECTURE)/Shell.efi
-  }
+!if $(TARGET) == RELEASE
+    SECTION PE32 = EdkShellBinPkg/FullShell/$(EDK_DXE_ARCHITECTURE)/Shell_Full.efi
 !else
-!if $(BUILD_NEW_SHELL) == TRUE
-#  FILE APPLICATION = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile) {
-#  SECTION PE32 = $(OUTPUT_DIRECTORY)/DEBUG_VS2010x86/X64/shell.efi
-#  }
-  INF  ShellPkg/Application/Shell/Shell.inf
- 
+    SECTION PE32 = ShellBinPkg/UefiShell/$(EDK_DXE_ARCHITECTURE)/Shell.efi
+!endif
+  }
 !else
 FILE APPLICATION = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile) {
-#    SECTION PE32 = EdkShellBinPkg/FullShell/$(EDK_DXE_ARCHITECTURE)/Shell_Full.efi
+!if $(TARGET) == RELEASE
+    SECTION PE32 = EdkShellBinPkg/FullShell/$(EDK_DXE_ARCHITECTURE)/Shell_Full.efi
+!else
     SECTION PE32 = ShellBinPkg/UefiShell/$(EDK_DXE_ARCHITECTURE)/Shell.efi
+!endif
   }
-
 !endif
 !endif
 
@@ -828,8 +941,6 @@ READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
 INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
-
-
 !endif
 
 ################################################################################

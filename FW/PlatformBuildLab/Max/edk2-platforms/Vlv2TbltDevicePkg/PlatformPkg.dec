@@ -3,15 +3,24 @@
 #
 # This package provides platform specific modules.
 # Copyright (c) 2009  - 2018, Intel Corporation. All rights reserved.<BR>
-#                                                                                  
-# This program and the accompanying materials are licensed and made available under
-# the terms and conditions of the BSD License that accompanies this distribution.  
-# The full text of the license may be found at                                     
-# http://opensource.org/licenses/bsd-license.php.                                  
-#                                                                                  
-# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-#                                                                                  
+#                                                                                  
+
+# This program and the accompanying materials are licensed and made available under
+
+# the terms and conditions of the BSD License that accompanies this distribution.  
+
+# The full text of the license may be found at                                     
+
+# http://opensource.org/licenses/bsd-license.php.                                  
+
+#                                                                                  
+
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+#                                                                                  
+
 #
 #
 #**/
@@ -95,6 +104,8 @@
 
 
 [PcdsFixedAtBuild]
+  gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsBase|0xFF400000|UINT32|0x50000001
+  gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsSize|0x00800000|UINT32|0x50000002
   gPlatformModuleTokenSpaceGuid.PcdFlashNvStorageBase|0xFFF60000|UINT32|0x20000007
   gPlatformModuleTokenSpaceGuid.PcdFlashNvStorageSize|0x00010000|UINT32|0x20000008
   gPlatformModuleTokenSpaceGuid.PcdFlashNvStorageEventLogBase|0xFFF6C000|UINT32|0x30000007

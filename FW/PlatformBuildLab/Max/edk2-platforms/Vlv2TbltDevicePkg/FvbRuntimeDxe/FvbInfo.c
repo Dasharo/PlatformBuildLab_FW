@@ -3,15 +3,24 @@
   These data is intent to decouple FVB driver with FV header.
 
 Copyright (c) 2006  - 2014, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 
 **/
 
@@ -34,6 +43,9 @@ Copyright (c) 2006  - 2014, Intel Corporation. All rights reserved.<BR>
 
 #define NV_STORAGE_BASE_ADDRESS     FixedPcdGet32(PcdFlashNvStorageVariableBase)
 #define SYSTEM_NV_BLOCK_NUM         ((FixedPcdGet32(PcdFlashNvStorageVariableSize)+ FixedPcdGet32(PcdFlashNvStorageFtwWorkingSize) + FixedPcdGet32(PcdFlashNvStorageFtwSpareSize))/ FVB_MEDIA_BLOCK_SIZE)
+
+#define FV_TXE_TOOLS_BASE_ADDRESS   FixedPcdGet32(PcdFlashTxeToolsBase)
+#define TXE_TOOLS_BLOCK_NUM         (FixedPcdGet32(PcdFlashTxeToolsSize) / FVB_MEDIA_BLOCK_SIZE)
 
 typedef struct {
   EFI_PHYSICAL_ADDRESS        BaseAddress;
@@ -138,6 +150,39 @@ EFI_FVB2_MEDIA_INFO mPlatformFvbMediaInfo[] = {
       }
     }
   }
+#ifdef BUILD_16M
+  ,
+  //
+  // TXE Tools FVB
+  //
+  {
+    FV_TXE_TOOLS_BASE_ADDRESS,
+    {
+      {0,}, //ZeroVector[16]
+      EFI_FIRMWARE_FILE_SYSTEM2_GUID,
+      FVB_MEDIA_BLOCK_SIZE * TXE_TOOLS_BLOCK_NUM,
+      EFI_FVH_SIGNATURE,
+      0x0004feff, // check MdePkg/Include/Pi/PiFirmwareVolume.h for details on EFI_FVB_ATTRIBUTES_2
+      sizeof (EFI_FIRMWARE_VOLUME_HEADER) + sizeof (EFI_FV_BLOCK_MAP_ENTRY),
+      0,    //CheckSum which will be calucated dynamically.
+      0,    //ExtHeaderOffset
+      {0,}, //Reserved[1]
+      2,    //Revision
+      {
+        {
+          TXE_TOOLS_BLOCK_NUM,
+          FVB_MEDIA_BLOCK_SIZE,
+        }
+      }
+    },
+    {
+      {
+        0,
+        0
+      }
+    }
+  }
+#endif
 };
 
 EFI_STATUS

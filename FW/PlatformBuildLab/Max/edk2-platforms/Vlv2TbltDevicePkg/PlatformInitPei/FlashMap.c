@@ -1,15 +1,24 @@
 /** @file
 
   Copyright (c) 2004  - 2014, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 
 
 
@@ -69,7 +78,13 @@ static EFI_FLASH_AREA_DATA          mFlashAreaData[]  = {
     FixedPcdGet32 (PcdFlashFvMainSize),
     EFI_FLASH_AREA_FV | EFI_FLASH_AREA_MEMMAPPED_FV,
     EFI_FLASH_AREA_MAIN_BIOS }
-
+#ifdef BUILD_16M
+    ,
+    { FixedPcdGet32 (PcdFlashTxeToolsBase),
+    FixedPcdGet32 (PcdFlashTxeToolsSize),
+    EFI_FLASH_AREA_FV | EFI_FLASH_AREA_MEMMAPPED_FV,
+    EFI_FLASH_AREA_OEM_BINARY }
+#endif
 };
 
 #define NUM_FLASH_AREA_DATA (sizeof (mFlashAreaData) / sizeof (mFlashAreaData[0]))
@@ -108,6 +123,7 @@ PeimInitializeFlashMap (
     switch (FlashHobData.AreaType) {
     case EFI_FLASH_AREA_RECOVERY_BIOS:
     case EFI_FLASH_AREA_MAIN_BIOS:
+    case EFI_FLASH_AREA_OEM_BINARY:
       CopyMem (
         &FlashHobData.AreaTypeGuid,
         &mFfsGuid,

@@ -1,15 +1,24 @@
 /*++
 
   Copyright (c) 2004  - 2014, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 **/
 
 #ifndef _SPIFlash_H_
@@ -22,6 +31,7 @@
 
 typedef enum {
   EnumSpiFlashW25Q64,
+  EnumSpiFlashW25Q128_W,
   EnumSpiFlashAT25DF321A,
   EnumSpiFlashAT26DF321,
   EnumSpiFlashAT25DF641,
@@ -67,6 +77,7 @@ typedef enum {
 #define SF_DEVICE_ID1_W25X32        0x16
 #define SF_DEVICE_ID1_W25X64        0x17
 #define SF_DEVICE_ID0_W25QXX        0x40
+#define SF_DEVICE_ID0_W25QXX_W      0x60
 #define SF_DEVICE_ID1_W25Q16        0x15
 #define SF_DEVICE_ID1_W25Q32        0x16
 #define SF_DEVICE_ID1_W25Q64        0x17

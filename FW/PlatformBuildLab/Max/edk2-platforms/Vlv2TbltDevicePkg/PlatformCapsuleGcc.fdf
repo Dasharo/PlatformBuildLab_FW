@@ -13,7 +13,7 @@
 #
 ##
 
-[FV.SystemFirmwareUpdateCargo]
+[FV.SYSTEMFIRMWAREUPDATECARGO]
 FvAlignment        = 16
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE

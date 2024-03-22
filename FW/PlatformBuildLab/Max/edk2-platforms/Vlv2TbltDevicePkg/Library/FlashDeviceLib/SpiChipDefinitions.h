@@ -1,22 +1,35 @@
 /*++
 
   Copyright (c) 2004  - 2014, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 
 
 **/
 
 #include <Library/SpiFlash.H>
 
+#ifdef BUILD_16M
+#define FLASH_SIZE  0xC00000
+#else
 #define FLASH_SIZE  0x400000
+#endif
 #define FLASH_DEVICE_BASE_ADDRESS (0xFFFFFFFF-FLASH_SIZE+1)
 
 //
@@ -48,6 +61,36 @@ SPI_INIT_TABLE  mInitTable[] = {
   // and depends on the system flash map. If BIOS size is bigger than flash return -1.
   //
   ((WINBOND_W25Q64_SIZE >= FLASH_SIZE) ? WINBOND_W25Q64_SIZE - FLASH_SIZE : (UINTN) (-1)),
+
+  //
+  // The size of the BIOS image in flash. This value is platform specific and depends on the system flash map.
+  //
+  FLASH_SIZE
+  },
+  {
+  SF_VENDOR_ID_WINBOND,     // VendorId
+  SF_DEVICE_ID0_W25QXX_W,   // DeviceId 0
+  SF_DEVICE_ID1_W25Q128,    // DeviceId 1
+  {
+    SF_INST_WREN,           // Prefix Opcode 0: Write Enable
+    SF_INST_EWSR            // Prefix Opcode 1: Enable Write Status Register
+  },
+  {
+    {EnumSpiOpcodeReadNoAddr,     SF_INST_JEDEC_READ_ID,  EnumSpiCycle50MHz, EnumSpiOperationJedecId           },     // Opcode 0: Read ID
+    {EnumSpiOpcodeRead,           SF_INST_READ,           EnumSpiCycle50MHz, EnumSpiOperationReadData          },     // Opcode 1: Read
+    {EnumSpiOpcodeReadNoAddr,     SF_INST_RDSR,           EnumSpiCycle50MHz, EnumSpiOperationReadStatus        },     // Opcode 2: Read Status Register
+    {EnumSpiOpcodeRead,           SF_INST_SFDP,           EnumSpiCycle50MHz, EnumSpiOperationDiscoveryParameters},    // Opcode 3: Serial Flash Discovery Parameters
+    {EnumSpiOpcodeWrite,          SF_INST_SERASE,         EnumSpiCycle50MHz, EnumSpiOperationErase_4K_Byte     },     // Opcode 4: Sector Erase (4KB)
+    {EnumSpiOpcodeWrite,          SF_INST_64KB_ERASE,     EnumSpiCycle50MHz, EnumSpiOperationErase_64K_Byte    },     // Opcode 5: Block Erase (64KB
+    {EnumSpiOpcodeWrite,          SF_INST_PROG,           EnumSpiCycle50MHz, EnumSpiOperationProgramData_1_Byte},     // Opcode 6: Byte Program
+    {EnumSpiOpcodeWriteNoAddr,    SF_INST_WRSR,           EnumSpiCycle50MHz, EnumSpiOperationWriteStatus       },     // Opcode 7: Write Status Register
+  },
+
+  //
+  // The offset of the start of the BIOS image in flash. This value is platform specific
+  // and depends on the system flash map. If BIOS size is bigger than flash return -1.
+  //
+  ((WINBOND_W25Q128_SIZE >= FLASH_SIZE) ? WINBOND_W25Q128_SIZE - FLASH_SIZE : (UINTN) (-1)),
 
   //
   // The size of the BIOS image in flash. This value is platform specific and depends on the system flash map.

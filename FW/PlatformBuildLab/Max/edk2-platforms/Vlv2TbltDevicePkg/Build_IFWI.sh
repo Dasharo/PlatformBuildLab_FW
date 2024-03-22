@@ -83,6 +83,9 @@ for (( i=1; i<=$#; ))
     elif [ "$1" == "/yL" ]; then
       Build_Flags="$Build_Flags /yL"
       shift
+    elif [ "$1" == "/16M" ]; then
+      Build_Flags="$Build_Flags /16M"
+      shift
     else
       break
     fi

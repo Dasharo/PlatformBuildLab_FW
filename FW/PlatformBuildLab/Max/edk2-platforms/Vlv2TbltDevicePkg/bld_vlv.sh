@@ -31,6 +31,7 @@ Build_Flags=
 exitCode=0
 Arch=X64
 SpiLock=0
+Build16M=1
 # thread count
 TN=1
 
@@ -140,14 +141,14 @@ for (( i=1; i<=$#; ))
       shift
     elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/YL" ]; then
       SpiLock=1
-      shift      
+      shift
+    elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/16M" ]; then
+      Build16M=1
+      shift
     else
       break
     fi
   done
-
-
-
 
 
 ## Required argument(s)
@@ -241,6 +242,9 @@ if [ -e "$WORKSPACE/$BUILD_PATH/$Arch/BiosId.bin" ]; then
   rm -f $WORKSPACE/$BUILD_PATH/$Arch/BiosId.bin
 fi
 
+if [ $Build16M == "1" ]; then
+B16M="-D BUILD_16M=TRUE"
+fi
 
 $PLATFORM_PACKAGE/GenBiosId -i $CORE_PATH/Conf/BiosId.env -o $WORKSPACE/$BUILD_PATH/$Arch/BiosId.bin
 
@@ -254,15 +258,18 @@ $PLATFORM_PACKAGE/GenBiosId -i $CORE_PATH/Conf/BiosId.env -o $WORKSPACE/$BUILD_P
  echo . . . 
  echo  
 echo "Invoking EDK2 build..."
- echo "build " $JLog  -D $SDB -D $LG $QF 
- build  $JLog  -D $SDB -D $LG $QF 
- echo command for build  $JLog -D $SDB -D $LG $QF
+ echo "build " $JLog  -D $SDB -D $LG $B16M $QF
+ build  $JLog  -D $SDB -D $LG $B16M $QF 
+ echo command for build  $JLog -D $SDB -D $LG $B16M $QF
 
-
-if [ $SpiLock == "1" ]; then
-  IFWI_HEADER_FILE=$PLATFORM_PACKAGE/Stitch/IFWIHeader/IFWI_HEADER_SPILOCK.bin
+if [ $Build16M == "1" ]; then
+    IFWI_HEADER_FILE=$PLATFORM_PACKAGE/Stitch/IFWIHeader/IFWI_HEADER_16M.bin
 else
-  IFWI_HEADER_FILE=$PLATFORM_PACKAGE/Stitch/IFWIHeader/IFWI_HEADER.bin
+  if [ $SpiLock == "1" ]; then
+    IFWI_HEADER_FILE=$PLATFORM_PACKAGE/Stitch/IFWIHeader/IFWI_HEADER_SPILOCK.bin
+  else
+    IFWI_HEADER_FILE=$PLATFORM_PACKAGE/Stitch/IFWIHeader/IFWI_HEADER.bin
+  fi
 fi
 
 echo $IFWI_HEADER_FILE
@@ -285,7 +292,9 @@ cp -f $WORKSPACE/$BUILD_PATH/FV/VLV.fd  $WORKSPACE/$BIOS_Name
 
 echo > $WORKSPACE/$BUILD_PATH/FV/SYSTEMFIRMWAREUPDATECARGO.Fv
 build -p $PLATFORM_PACKAGE/PlatformCapsuleGcc.dsc
+
 SEC_VERSION=1.1.4.1145v3
+
 cat $IFWI_HEADER_FILE $SILICON_PATH/Vlv2MiscBinariesPkg/SEC/$SEC_VERSION/VLV_SEC_REGION.bin $SILICON_PATH/Vlv2MiscBinariesPkg/SEC/$SEC_VERSION/Vacant.bin $WORKSPACE/$BIOS_Name > $PLATFORM_PACKAGE/Stitch/$BIOS_ID
 
 

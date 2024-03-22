@@ -113,10 +113,9 @@
   DxeSmmDriverEntryPoint|IntelFrameworkPkg/Library/DxeSmmDriverEntryPoint/DxeSmmDriverEntryPoint.inf
 !if $(HTTP_BOOT_SUPPORT) == TRUE
   TcgPhysicalPresenceLib|SecurityPkg/Library/DxeTcgPhysicalPresenceLib/DxeTcgPhysicalPresenceLib.inf
-  Tcg2PhysicalPresenceLib|SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.inf
   TcgPpVendorLib|SecurityPkg/Library/TcgPpVendorLibNull/TcgPpVendorLibNull.inf
   Tcg2PpVendorLib|SecurityPkg/Library/Tcg2PpVendorLibNull/Tcg2PpVendorLibNull.inf
-  Tpm2DeviceLib|SecurityPkg/Library/Tpm2DeviceLibRouter/Tpm2DeviceLibRouterDxe.inf
+  Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCPei/Tpm2DeviceLibSeC.inf
   TlsLib|CryptoPkg/Library/TlsLib/TlsLib.inf
 !endif
 
@@ -250,11 +249,10 @@
   MonoStatusCodeLib|$(PLATFORM_PACKAGE)/MonoStatusCode/MonoStatusCode.inf
 !if $(TARGET) == RELEASE
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 !else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
 !endif
+  SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
 
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
@@ -274,6 +272,7 @@
 !else
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
+  SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
 !endif
 
   #
@@ -313,8 +312,8 @@
   IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
 !endif
   TpmMeasurementLib|SecurityPkg/Library/DxeTpmMeasurementLib/DxeTpmMeasurementLib.inf
-  TrEEPhysicalPresenceLib|Vlv2TbltDevicePkg/Library/DxeTrEEPhysicalPresenceLib/DxeTrEEPhysicalPresenceLib.inf
-!if $(FTPM_ENABLE) == TRUE  
+!if $(FTPM_ENABLE) == TRUE
+  Tcg2PhysicalPresenceLib|SecurityPkg/Library/PeiTcg2PhysicalPresenceLib/PeiTcg2PhysicalPresenceLib.inf
   TrEEPpVendorLib|SecurityPkg/Library/TrEEPpVendorLibNull/TrEEPpVendorLibNull.inf
 !endif  
   
@@ -355,10 +354,8 @@
 
 !if $(TARGET) == RELEASE
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 !else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-  SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
 !endif
 
   LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxPeiLib.inf
@@ -391,6 +388,7 @@
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
 
   TcgPhysicalPresenceLib|SecurityPkg/Library/DxeTcgPhysicalPresenceLib/DxeTcgPhysicalPresenceLib.inf
+  Tcg2PhysicalPresenceLib|SecurityPkg/Library/DxeTcg2PhysicalPresenceLib/DxeTcg2PhysicalPresenceLib.inf
 !if $(TPM_ENABLED) == TRUE
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
 !endif
@@ -754,6 +752,14 @@ gEfiMdeModulePkgTokenSpaceGuid.PcdSystemRebootAfterCapsuleProcessFlag|0x0001
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0x$(PLATFORM_PCIEXPRESS_BASE)
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLegacyBiosCacheLegacyRegion|FALSE
 
+!if $(BUILD_16M) == TRUE
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageBase|0xFF400000
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageSize|0x00C00000
+!else
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageBase|0xFFC00000
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageSize|0x00400000
+!endif
+
   ## This PCD specifies whether to use the optimized timing for best PS2 detection performance.
   #  Note this PCD could be set to TRUE for best boot performance and set to FALSE for best device compatibility.
   gEfiMdeModulePkgTokenSpaceGuid.PcdFastPS2Detection|TRUE
@@ -1103,21 +1109,18 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
  MdeModulePkg/Universal/FaultTolerantWritePei/FaultTolerantWritePei.inf
 
 !if $(FTPM_ENABLE) == TRUE
-   SecurityPkg/Tcg/TrEEPei/TrEEPei.inf {
-    <PcdsPatchableInModule>
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000046
+  SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigPei.inf {
     <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      Tpm12DeviceLib|SecurityPkg/Library/Tpm12DeviceLibDTpm/Tpm12DeviceLibDTpm.inf
+      Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCPei/Tpm2DeviceLibSeC.inf
+      PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
+  }
+  SecurityPkg/Tcg/Tcg2Pei/Tcg2Pei.inf {
+    <LibraryClasses>
+      Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCPei/Tpm2DeviceLibSeC.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
       PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
-  }
-!endif
-!if $(TPM_ENABLED) == TRUE
-  SecurityPkg/Tcg/TrEEConfig/TrEEConfigPei.inf {
-    <LibraryClasses>
-      PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
-      Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCPei/Tpm2DeviceLibSeC.inf
   }
 !endif
 !if $(ACPI50_ENABLE) == TRUE
@@ -1253,11 +1256,12 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
     !if $(FTPM_ENABLE) == TRUE  
       Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCDxe/Tpm2DeviceLibSeC.inf
     !else
-      TrEEPhysicalPresenceLib|$(PLATFORM_PACKAGE)/Library/DxeTrEEPhysicalPresenceLibNull/DxeTrEEPhysicalPresenceLibNull.inf
+      TrEEPhysicalPresenceLib|$(PLATFORM_PACKAGE)/Library/DxeTrEEPhysicalPresenceLib/DxeTrEEPhysicalPresenceLib.inf
     !endif  
   }
   $(PLATFORM_PACKAGE)/UiApp/UiApp.inf
 !endif
+  MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf
   MdeModulePkg/Universal/LoadFileOnFv2/LoadFileOnFv2.inf
   MdeModulePkg/Universal/SmmCommunicationBufferDxe/SmmCommunicationBufferDxe.inf
 
@@ -1385,17 +1389,20 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
   $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/Tpm2DeviceSeCDxe.inf
   SecurityPkg/Tcg/MemoryOverwriteControl/TcgMor.inf
   SecurityPkg/Tcg/MemoryOverwriteRequestControlLock/TcgMorLockSmm.inf
-  SecurityPkg/Tcg/TrEEDxe/TrEEDxe.inf{
+  SecurityPkg/Tcg/Tcg2Dxe/Tcg2Dxe.inf {
     <LibraryClasses>
+      Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCDxe/Tpm2DeviceLibSeC.inf
+      NULL|SecurityPkg/Library/Tpm2DeviceLibDTpm/Tpm2InstanceLibDTpm.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha1/HashInstanceLibSha1.inf
       NULL|SecurityPkg/Library/HashInstanceLibSha256/HashInstanceLibSha256.inf
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
-      Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCDxe/Tpm2DeviceLibSeC.inf
   }
-  SecurityPkg/Tcg/TrEEConfig/TrEEConfigDxe.inf {
+
+  SecurityPkg/Tcg/Tcg2Config/Tcg2ConfigDxe.inf {
     <LibraryClasses>
       Tpm2DeviceLib|Vlv2TbltDevicePkg/Library/Tpm2DeviceLibSeCDxe/Tpm2DeviceLibSeC.inf
   }
+
   $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/FtpmSmm.inf
 !endif
 !if $(TPM_ENABLED) == TRUE
@@ -1741,8 +1748,13 @@ Vlv2TbltDevicePkg/Application/SsdtUpdate/SsdtUpdate.inf
   DEFINE DSC_TPM_BUILD_OPTIONS =
 !endif
 
+!if $(BUILD_16M) == TRUE
+  DEFINE DSC_BUILD_16M = -DBUILD_16M
+!else
+  DEFINE DSC_BUILD_16M =
+!endif
 
-  DEFINE EDK_EDKII_DSC_FEATURE_BUILD_OPTIONS = $(MINNOW2_FSP_OPTION) $(MINNOW2_BUILD_OPTION) $(ENBDT_PF_ENABLE) $(EXTERNAL_VGA_BUILD_OPTION) $(PCIE_ENUM_WA_BUILD_OPTION) $(X0_WA_ENABLE_BUILD_OPTION) $(A0_WA_ENABLE_BUILD_OPTION) $(MICROCODE_FREE_BUILD_OPTIONS) $(SIMICS_BUILD_OPTIONS) $(HYBRID_BUILD_OPTIONS) $(COMPACT_BUILD_OPTIONS) $(VP_BUILD_OPTIONS) $(SYSCTL_ID_BUILD_OPTION) $(CLKGEN_CONFIG_EXTRA_BUILD_OPTION) $(SYSCTL_X0_CONVERT_BOARD_OPTION) $(ENBDT_S3_SUPPORT_OPTIONS) $(SATA_SUPPORT_BUILD_OPTION) $(PCIESC_SUPPORT_BUILD_OPTION) $(DSC_FTPM_BUILD_OPTIONS) $(DSC_FTPM_ERROR_WR_BUILD_OPTIONS) $(DSC_TPM_BUILD_OPTIONS) $(DSC_BYTI_SECURE_BOOT_BUILD_OPTIONS)
+  DEFINE EDK_EDKII_DSC_FEATURE_BUILD_OPTIONS = $(MINNOW2_FSP_OPTION) $(MINNOW2_BUILD_OPTION) $(ENBDT_PF_ENABLE) $(EXTERNAL_VGA_BUILD_OPTION) $(PCIE_ENUM_WA_BUILD_OPTION) $(X0_WA_ENABLE_BUILD_OPTION) $(A0_WA_ENABLE_BUILD_OPTION) $(MICROCODE_FREE_BUILD_OPTIONS) $(SIMICS_BUILD_OPTIONS) $(HYBRID_BUILD_OPTIONS) $(COMPACT_BUILD_OPTIONS) $(VP_BUILD_OPTIONS) $(SYSCTL_ID_BUILD_OPTION) $(CLKGEN_CONFIG_EXTRA_BUILD_OPTION) $(SYSCTL_X0_CONVERT_BOARD_OPTION) $(ENBDT_S3_SUPPORT_OPTIONS) $(SATA_SUPPORT_BUILD_OPTION) $(PCIESC_SUPPORT_BUILD_OPTION) $(DSC_FTPM_BUILD_OPTIONS) $(DSC_FTPM_ERROR_WR_BUILD_OPTIONS) $(DSC_TPM_BUILD_OPTIONS) $(DSC_BYTI_SECURE_BOOT_BUILD_OPTIONS) $(DSC_BUILD_16M)
 !if $(PERFORMANCE_ENABLE) == TRUE
   DEFINE PDB_BUILD_OPTION = -Zi
 !endif
@@ -1793,7 +1805,7 @@ Vlv2TbltDevicePkg/Application/SsdtUpdate/SsdtUpdate.inf
   DEFINE EDK_DSC_FEATURE_BUILD_OPTIONS = $(DSC_S3_BUILD_OPTIONS) $(DSC_ACPI_BUILD_OPTIONS) $(DSC_SEC_BUILD_OPTIONS) $(DSC_FTPM_BUILD_OPTIONS) $(DSC_FTPM_ERROR_WR_BUILD_OPTIONS) $(DSC_TPM_BUILD_OPTIONS) $(SOFTSDV_BUILD_OPTIONS) $(SIMICS_BUILD_OPTIONS) $(HYBRID_BUILD_OPTIONS) $(COMPACT_BUILD_OPTIONS) $(VP_BUILD_OPTIONS) $(QT_BUILD_OPTIONS) $(DSC_BYTI_SECURE_BOOT_BUILD_OPTIONS) -D$(PROJECT_SC_CHIPSET)
 
   DEFINE EDK_DSC_OTHER_BUILD_OPTIONS = $(EDK_EDKII_DSC_FEATURE_BUILD_OPTIONS) $(SV_BUILD_OPTIONS) $(INTEL_FASTBOOT_BUILD_OPTION)
-  DEFINE EDK_DSC_GLOBAL_BUILD_OPTIONS = $(ENBDT_PF_ENABLE) $(EDK_DSC_FEATURE_BUILD_OPTIONS) $(EDK_DSC_OTHER_BUILD_OPTIONS) -D EFI_SPECIFICATION_VERSION=0x00020000  -D PI_SPECIFICATION_VERSION=0x00000009  -D TIANO_RELEASE_VERSION=0x00080006 -D SUPPORT_DEPRECATED_PCI_CFG_PPI -D CSM_SMMENTRY_PORT8DATA8 -D EDKII_GLUE_PciExpressBaseAddress=0x$(PLATFORM_PCIEXPRESS_BASE) -D MAX_VARIABLE_SIZE=0x2000 -D EFI_FIRMWARE_VENDOR="L/"INTEL/"" -D EFI_BUILD_VERSION="L/"EDKII/"" -DEFI_PEI_REPORT_STATUS_CODE_ON $(ENBDT_S3_SUPPORT_OPTIONS)
+  DEFINE EDK_DSC_GLOBAL_BUILD_OPTIONS = $(ENBDT_PF_ENABLE) $(EDK_DSC_FEATURE_BUILD_OPTIONS) $(EDK_DSC_OTHER_BUILD_OPTIONS) -D EFI_SPECIFICATION_VERSION=0x00020000  -D PI_SPECIFICATION_VERSION=0x00000009  -D TIANO_RELEASE_VERSION=0x00080006 -D SUPPORT_DEPRECATED_PCI_CFG_PPI -D CSM_SMMENTRY_PORT8DATA8 -D EDKII_GLUE_PciExpressBaseAddress=0x$(PLATFORM_PCIEXPRESS_BASE) -D MAX_VARIABLE_SIZE=0x2000 -D EFI_FIRMWARE_VENDOR="L/"INTEL/"" -D EFI_BUILD_VERSION="L/"EDKII/"" -DEFI_PEI_REPORT_STATUS_CODE_ON $(ENBDT_S3_SUPPORT_OPTIONS) $(DSC_BUILD_16M)
 
   *_*_IA32_ASM_FLAGS         = -DEFI32 -D EDKII_GLUE_PciExpressBaseAddress=$(PLATFORM_PCIEXPRESS_BASE)h -DNOCS_S3_SUPPORT
   DEBUG_*_IA32_CC_FLAGS      = -D EFI32 $(EDK_DSC_GLOBAL_BUILD_OPTIONS) $(DEBUG_BUILD_OPTIONS)

@@ -5,15 +5,24 @@
   It depends on which Flash Device Library to be linked with this driver.
 
 Copyright (c) 2006  - 2017, Intel Corporation. All rights reserved.<BR>
-                                                                                   
-  This program and the accompanying materials are licensed and made available under
-  the terms and conditions of the BSD License that accompanies this distribution.  
-  The full text of the license may be found at                                     
-  http://opensource.org/licenses/bsd-license.php.                                  
-                                                                                   
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
-                                                                                   
+                                                                                   
+
+  This program and the accompanying materials are licensed and made available under
+
+  the terms and conditions of the BSD License that accompanies this distribution.  
+
+  The full text of the license may be found at                                     
+
+  http://opensource.org/licenses/bsd-license.php.                                  
+
+                                                                                   
+
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+                                                                                   
+
 
 **/
 
@@ -1008,7 +1017,7 @@ FvbInitialize (
   UINTN                                 Idx;
   UINT32                                MaxLbaSize;
   EFI_BOOT_MODE                         BootMode;
-  UINT32                                PlatformFvBaseAddress[3];
+  UINT32                                PlatformFvBaseAddress[4];
   UINT32                                PlatformFvBaseAddressCount;
 
   //
@@ -1023,10 +1032,11 @@ FvbInitialize (
     PlatformFvBaseAddressCount = 1;
     PlatformFvBaseAddress[0]   = PcdGet32 (PcdFlashNvStorageVariableBase);
   } else {
-    PlatformFvBaseAddressCount = 3;
+    PlatformFvBaseAddressCount = 4;
     PlatformFvBaseAddress[0]   = PcdGet32 (PcdFlashFvMainBase);
     PlatformFvBaseAddress[1]   = PcdGet32 (PcdFlashNvStorageVariableBase);
     PlatformFvBaseAddress[2]   = PcdGet32 (PcdFlashFvRecoveryBase);
+    PlatformFvBaseAddress[3]   = PcdGet32 (PcdFlashTxeToolsBase);
   }
 
   //
