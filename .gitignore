@@ -1,0 +1,8 @@
+FW/PlatformBuildLab/Max/edk2/Conf
+FW/PlatformBuildLab/Max/Build
+FW/PlatformBuildLab/Max/edk2-platforms/Vlv2TbltDevicePkg/AutoPlatformCFG.txt
+.bash_history
+*.rom
+*.ROM
+*.bin
+
