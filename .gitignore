@@ -1,6 +1,9 @@
 FW/PlatformBuildLab/Max/edk2/Conf
 FW/PlatformBuildLab/Max/Build
 FW/PlatformBuildLab/Max/edk2-platforms/Vlv2TbltDevicePkg/AutoPlatformCFG.txt
+FW/PlatformBuildLab/Max/ipxe/
+FW/PlatformBuildLab/Max/silicon/Vlv2MiscBinariesPkg/SEC/Ia32/
+FW/PlatformBuildLab/Max/silicon/Vlv2MiscBinariesPkg/SEC/X64/
 .bash_history
 *.rom
 *.ROM
