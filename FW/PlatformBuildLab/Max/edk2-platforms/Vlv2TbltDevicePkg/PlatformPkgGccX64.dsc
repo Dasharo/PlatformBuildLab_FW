@@ -252,7 +252,6 @@
 !else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
-  SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
 
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
@@ -363,7 +362,6 @@
 !if $(SOURCE_DEBUG_ENABLE) == TRUE
   PeCoffExtraActionLib|SourceLevelDebugPkg/Library/PeCoffExtraActionLibDebug/PeCoffExtraActionLibDebug.inf
   DebugCommunicationLib|SourceLevelDebugPkg/Library/DebugCommunicationLibSerialPort/DebugCommunicationLibSerialPort.inf
-  SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   DebugAgentLib|SourceLevelDebugPkg/Library/DebugAgent/SecPeiDebugAgentLib.inf 
 !else
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
@@ -403,7 +401,12 @@
   HashLib|SecurityPkg/Library/HashLibBaseCryptoRouter/HashLibBaseCryptoRouterDxe.inf
 
 [LibraryClasses.X64.DXE_DRIVER]
+
+!if $(TARGET) == RELEASE
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
+  DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+!endif
   PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   CustomizedDisplayLib|MdeModulePkg/Library/CustomizedDisplayLib/CustomizedDisplayLib.inf
@@ -439,7 +442,9 @@
   SmmCpuPlatformHookLib|UefiCpuPkg/Library/SmmCpuPlatformHookLibNull/SmmCpuPlatformHookLibNull.inf
 
   BaseCryptLib|CryptoPkg/Library/BaseCryptLib/SmmCryptLib.inf
-!if $(TARGET) != RELEASE
+!if $(TARGET) == RELEASE
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
 
@@ -462,7 +467,9 @@
 
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
 
-!if $(TARGET) != RELEASE
+!if $(TARGET) == RELEASE
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
   DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
 
@@ -756,8 +763,8 @@ gEfiMdeModulePkgTokenSpaceGuid.PcdSystemRebootAfterCapsuleProcessFlag|0x0001
   gPlatformModuleTokenSpaceGuid.PcdBiosImageBase|0xFF400000
   gPlatformModuleTokenSpaceGuid.PcdBiosImageSize|0x00C00000
 !else
-  gPlatformModuleTokenSpaceGuid.PcdBiosImageBase|0xFFC00000
-  gPlatformModuleTokenSpaceGuid.PcdBiosImageSize|0x00400000
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageBase|0xFFA00000
+  gPlatformModuleTokenSpaceGuid.PcdBiosImageSize|0x00600000
 !endif
 
   ## This PCD specifies whether to use the optimized timing for best PS2 detection performance.
@@ -1066,7 +1073,9 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
     <PcdsPatchableInModule>
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x803805c6
     <LibraryClasses>
-!if $(TARGET) != RELEASE
+!if $(TARGET) == RELEASE
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
       PcdLib|MdePkg/Library/PeiPcdLib/PeiPcdLib.inf
@@ -1186,7 +1195,9 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
   MdeModulePkg/Universal/ReportStatusCodeRouter/RuntimeDxe/ReportStatusCodeRouterRuntimeDxe.inf
   MdeModulePkg/Universal/StatusCodeHandler/RuntimeDxe/StatusCodeHandlerRuntimeDxe.inf  {
     <LibraryClasses>
-!if $(TARGET) != RELEASE
+!if $(TARGET) == RELEASE
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+!else
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !endif
   }
@@ -1227,7 +1238,9 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
       IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
       BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
       PlatformBdsLib|$(PLATFORM_PACKAGE)/Library/PlatformBdsLib/PlatformBdsLib.inf
+    !if $(TARGET) != RELEASE
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+    !endif
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
       SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
     !if $(FTPM_ENABLE) == TRUE  
@@ -1250,7 +1263,9 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
       IntrinsicLib|CryptoPkg/Library/IntrinsicLib/IntrinsicLib.inf
       BaseCryptLib|CryptoPkg/Library/BaseCryptLib/BaseCryptLib.inf
       PlatformBdsLib|$(PLATFORM_PACKAGE)/Library/PlatformBdsLib/PlatformBdsLib.inf
+    !if $(TARGET) != RELEASE
       DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+    !endif
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
       SerialPortLib|$(PLATFORM_PACKAGE)/Library/SerialPortLib/SerialPortLib.inf
     !if $(FTPM_ENABLE) == TRUE  

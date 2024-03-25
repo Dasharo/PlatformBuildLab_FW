@@ -1078,7 +1078,7 @@ INF FILE_GUID=F1E68873-DA37-4AA0-A12F-F0F8EBA2B24E USE=X64 SignedCapsulePkg/Univ
 [Rule.Common.UEFI_APPLICATION.UI]
   FILE APPLICATION = $(NAMED_GUID) {
     PE32      PE32                     $(INF_OUTPUT)/$(MODULE_NAME).efi
-    UI        STRING="Enter Setup"
+    UI        STRING="Setup"
     VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 

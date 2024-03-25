@@ -149,9 +149,7 @@ EFI_FVB2_MEDIA_INFO mPlatformFvbMediaInfo[] = {
         0
       }
     }
-  }
-#ifdef BUILD_16M
-  ,
+  },
   //
   // TXE Tools FVB
   //
@@ -182,7 +180,6 @@ EFI_FVB2_MEDIA_INFO mPlatformFvbMediaInfo[] = {
       }
     }
   }
-#endif
 };
 
 EFI_STATUS

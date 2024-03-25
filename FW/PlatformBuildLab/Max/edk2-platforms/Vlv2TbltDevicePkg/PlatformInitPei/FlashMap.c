@@ -77,14 +77,16 @@ static EFI_FLASH_AREA_DATA          mFlashAreaData[]  = {
   { FixedPcdGet32 (PcdFlashFvMainBase),
     FixedPcdGet32 (PcdFlashFvMainSize),
     EFI_FLASH_AREA_FV | EFI_FLASH_AREA_MEMMAPPED_FV,
-    EFI_FLASH_AREA_MAIN_BIOS }
-#ifdef BUILD_16M
-    ,
-    { FixedPcdGet32 (PcdFlashTxeToolsBase),
+    EFI_FLASH_AREA_MAIN_BIOS },
+
+  //
+  // TXE Tools
+  //
+  { FixedPcdGet32 (PcdFlashTxeToolsBase),
     FixedPcdGet32 (PcdFlashTxeToolsSize),
     EFI_FLASH_AREA_FV | EFI_FLASH_AREA_MEMMAPPED_FV,
     EFI_FLASH_AREA_OEM_BINARY }
-#endif
+
 };
 
 #define NUM_FLASH_AREA_DATA (sizeof (mFlashAreaData) / sizeof (mFlashAreaData[0]))

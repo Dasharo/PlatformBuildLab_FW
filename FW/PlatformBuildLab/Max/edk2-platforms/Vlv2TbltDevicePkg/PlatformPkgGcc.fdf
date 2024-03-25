@@ -16,28 +16,35 @@
 
 [Defines]
 !if $(BUILD_16M) == TRUE
-DEFINE FLASH_BASE       = 0xFF400000     #The base address of the 16Mb FLASH Device.
-DEFINE FLASH_SIZE       = 0x00C00000     #The flash size in bytes of the 16Mb FLASH Device.
+DEFINE FLASH_BASE       = 0xFF200000     #The base address of the 16Mb FLASH Device.
+DEFINE FLASH_SIZE       = 0x00E00000     #The flash size in bytes of the 16Mb FLASH Device.
 DEFINE FLASH_BLOCK_SIZE = 0x1000         #The block size in bytes of the 16Mb FLASH Device.
-DEFINE FLASH_NUM_BLOCKS = 0xC00          #The number of blocks in 16Mb FLASH Device.
-DEFINE BIOS_OFFSET      = 0x00800000     #Offset to the 4MB BIOS region for 16M build
+DEFINE FLASH_NUM_BLOCKS = 0xE00          #The number of blocks in 16Mb FLASH Device.
+DEFINE BIOS_OFFSET      = 0x00A00000     #Offset to the 4MB BIOS region for 16M build
 
 DEFINE FLASH_AREA_BASE_ADDRESS                                = 0xFF000000
 DEFINE FLASH_AREA_SIZE                                        = 0x01000000
-!else
-DEFINE FLASH_BASE       = 0xFFC00000     #The base address of the 4Mb FLASH Device.
-DEFINE FLASH_SIZE       = 0x00400000     #The flash size in bytes of the 4Mb FLASH Device.
-DEFINE FLASH_BLOCK_SIZE = 0x1000         #The block size in bytes of the 4Mb FLASH Device.
-DEFINE FLASH_NUM_BLOCKS = 0x400          #The number of blocks in 4Mb FLASH Device.
-DEFINE BIOS_OFFSET      = 0x00000000     #Offset to the 4MB BIOS region for 8M build
-
-DEFINE FLASH_AREA_BASE_ADDRESS                                = 0xFF800000
-DEFINE FLASH_AREA_SIZE                                        = 0x00800000
-!endif
 
 DEFINE FLASH_REGION_TXE_TOOLS_OFFSET                          = 0x00000000
 DEFINE FLASH_REGION_TXE_TOOLS_SIZE                            = 0x00800000
-DEFINE FLASH_REGION_TXE_TOOLS_BASE                            = 0xFF400000
+DEFINE FLASH_REGION_TXE_TOOLS_BASE                            = 0xFF200000
+
+!else
+DEFINE FLASH_BASE       = 0xFFA00000     #The base address of the 6Mb FLASH Device.
+DEFINE FLASH_SIZE       = 0x00600000     #The flash size in bytes of the 6Mb FLASH Device.
+DEFINE FLASH_BLOCK_SIZE = 0x1000         #The block size in bytes of the 6Mb FLASH Device.
+DEFINE FLASH_NUM_BLOCKS = 0x600          #The number of blocks in 4Mb FLASH Device.
+DEFINE BIOS_OFFSET      = 0x00200000     #Offset to the 4MB BIOS region for 8M build
+
+DEFINE FLASH_AREA_BASE_ADDRESS                                = 0xFF800000
+DEFINE FLASH_AREA_SIZE                                        = 0x00800000
+
+DEFINE FLASH_REGION_TXE_TOOLS_OFFSET                          = 0x00000000
+DEFINE FLASH_REGION_TXE_TOOLS_SIZE                            = 0x00200000
+DEFINE FLASH_REGION_TXE_TOOLS_BASE                            = 0xFFA00000
+!endif
+
+
 
 DEFINE FLASH_REGION_VLVMICROCODE_OFFSET                       = 0x00000000 + $(BIOS_OFFSET)
 DEFINE FLASH_REGION_VLVMICROCODE_SIZE                         = 0x00040000
@@ -143,11 +150,9 @@ SET gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoverySize             = $(FLASH_R
 #
 # TXE Tools
 #
-!if $(BUILD_16M) == TRUE
 $(FLASH_REGION_TXE_TOOLS_OFFSET)|$(FLASH_REGION_TXE_TOOLS_SIZE)
 gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsBase|gPlatformModuleTokenSpaceGuid.PcdFlashTxeToolsSize
 FV = TXE_TOOLS_COMPACT_FV
-!endif
 #
 # CPU Microcodes
 #
@@ -200,7 +205,6 @@ $(FLASH_REGION_FV_RECOVERY_OFFSET)|$(FLASH_REGION_FV_RECOVERY_SIZE)
 gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoveryBase|gPlatformModuleTokenSpaceGuid.PcdFlashFvRecoverySize
 FV = FVRECOVERY
 
-!if $(BUILD_16M) == TRUE
 [FV.TXE_TOOLS_FV]
 BlockSize          = $(FLASH_BLOCK_SIZE)
 FvAlignment        = 16
@@ -275,7 +279,6 @@ FILE FV_IMAGE = E578B38C-E33E-431F-AA12-D69716A3564D {
 !endif
      }
 
-!endif
 ################################################################################
 #
 # FV Section
@@ -1155,7 +1158,7 @@ INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
 [Rule.Common.UEFI_APPLICATION.UI]
   FILE APPLICATION = $(NAMED_GUID) {
     PE32      PE32                     $(INF_OUTPUT)/$(MODULE_NAME).efi
-    UI        STRING="Enter Setup"
+    UI        STRING="Setup"
     VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
   }
 

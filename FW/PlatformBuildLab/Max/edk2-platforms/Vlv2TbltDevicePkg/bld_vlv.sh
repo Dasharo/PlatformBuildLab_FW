@@ -31,15 +31,15 @@ Build_Flags=
 exitCode=0
 Arch=X64
 SpiLock=0
-Build16M=1
+Build16M=0
 # thread count
-TN=1
+TN=$(nproc)
 
 export CORE_PATH=$WORKSPACE/edk2
 export PLATFORM_PATH=$WORKSPACE/edk2-platforms
 export SILICON_PATH=$WORKSPACE/silicon
 export EDK_TOOLS_BIN=$WORKSPACE/edk2-BaseTools-win32
-export PACKAGES_PATH=$WORKSPACE:$PLATFORM_PATH:$SILICON_PATH:$CORE_PATH
+export PACKAGES_PATH=$WORKSPACE:$PLATFORM_PATH:$SILICON_PATH:$CORE_PATH:$WORKSPACE/ipxe/src/bin-x86_64-efi-sb
 cd ./edk2
 echo $(pwd)
 echo "should be in WS/edk2 dir"
@@ -286,8 +286,13 @@ echo Skip "Running KeyEnroll..."
 VERSION_MAJOR=$(grep '^VERSION_MAJOR' Conf/BiosId.env | cut -d ' ' -f 3 | cut -c 1-4)
 VERSION_MINOR=$(grep '^VERSION_MINOR' Conf/BiosId.env | cut -d ' ' -f 3 | cut -c 1-2)
 BOARD_ID=$(grep '^BOARD_ID' Conf/BiosId.env | cut -d ' ' -f 3 | cut -c 1-7)
+if [ $Build16M == "1" ]; then
+BIOS_Name="$BOARD_ID"_"$Arch"_"$BUILD_TYPE"_"$VERSION_MAJOR"_"$VERSION_MINOR"_16M.ROM
+BIOS_ID="$BOARD_ID"_"$Arch"_"$BUILD_TYPE"_"$VERSION_MAJOR"_"$VERSION_MINOR"_GCC_16M.bin
+else
 BIOS_Name="$BOARD_ID"_"$Arch"_"$BUILD_TYPE"_"$VERSION_MAJOR"_"$VERSION_MINOR".ROM
 BIOS_ID="$BOARD_ID"_"$Arch"_"$BUILD_TYPE"_"$VERSION_MAJOR"_"$VERSION_MINOR"_GCC.bin
+fi
 cp -f $WORKSPACE/$BUILD_PATH/FV/VLV.fd  $WORKSPACE/$BIOS_Name
 
 echo > $WORKSPACE/$BUILD_PATH/FV/SYSTEMFIRMWAREUPDATECARGO.Fv
