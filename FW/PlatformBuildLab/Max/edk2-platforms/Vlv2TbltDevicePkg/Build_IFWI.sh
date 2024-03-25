@@ -33,6 +33,7 @@ Build_Flags=
 Stitch_Flags=
 Arch=X64
 PLATFORM_PACKAGE=Vlv2TbltDevicePkg
+CleanBuild=0
 
 ## Parse Optional arguments
 if [ "$1" == "/?" ]; then
@@ -50,6 +51,7 @@ for (( i=1; i<=$#; ))
       shift
     elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/C" ]; then
       Build_Flags="$Build_Flags /c"
+      CleanBuild=1
       shift
     elif [ "$(echo $1 | tr 'a-z' 'A-Z')" == "/ECP" ]; then
       Build_Flags="$Build_Flags /ecp"
@@ -91,6 +93,7 @@ for (( i=1; i<=$#; ))
     fi
   done
 
+
 ## Require 2 input parameters
 if [ "$2" == "" ]; then
   echo "Not Enough Arguments Provided"
@@ -109,6 +112,39 @@ if [ "$3" == "" ]; then
   IFWI_Suffix=
 else
   IFWI_Suffix="/S $3"
+fi
+
+if [ $Arch == "X64" ]; then
+
+  ## Build iPXE
+  if [ ! -d ../../ipxe ]; then
+    git clone http://git.ipxe.org/ipxe.git ../../ipxe
+    if [ $? != 0 ];then
+      echo "Failed to clone ipxe"
+      exit
+    fi
+  fi
+
+  if [ ! -f ../../ipxe/src/bin-x86_64-efi-sb/ipxe.efi ]; then
+    cd ../../ipxe || exit
+    git reset --hard HEAD || exit
+    git clean -df || exit
+    git checkout 77b07ea4fdc259d7253c6f9df2beda6e6c7a9d85 || exit
+    if [ $CleanBuild == "1" ]; then
+      make clean || exit
+    fi
+    sed -i 's|//#define\s*IMAGE_SCRIPT.*|#define IMAGE_SCRIPT|' "src/config/general.h"
+    if [ ! -f dasharo.ipxe ]; then
+      wget http://raw.githubusercontent.com/Dasharo/dasharo-blobs/main/dasharo/dasharo.ipxe || exit
+    fi
+    sed -i 's|.*DOWNLOAD_PROTO_HTTPS|#define DOWNLOAD_PROTO_HTTPS|g'  "src/config/general.h"
+    make -C src bin-x86_64-efi-sb/ipxe.efi EMBED=$PWD/dasharo.ipxe BUILD_ID_CMD="echo 0x1234567890"
+    if [ ! -f src/bin-x86_64-efi-sb/ipxe.efi ]; then
+      echo "Failed to build ipxe"
+      exit
+    fi
+    cd ../edk2-platforms/$PLATFORM_PACKAGE
+  fi
 fi
 
 ## Go to root directory
