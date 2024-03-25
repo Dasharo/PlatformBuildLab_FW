@@ -29,6 +29,7 @@ EFI_GRAPHICS_OUTPUT_BLT_PIXEL mColor;
 EFI_GUID mUiFile = { 0x462CAA21, 0x7614, 0x4503, { 0x83, 0x6E, 0x8A, 0xB6, 0xF4, 0x66, 0x23, 0x31 } };
 EFI_GUID mBootMenuFile = { 0xEEC25BDC, 0x67F2, 0x4D95, { 0xB1, 0xD5, 0xF8, 0x1B, 0x20, 0x39, 0xD1, 0x1D }};
 EFI_GUID gUefiShellFileGuid = { 0x7C04A583, 0x9E3E, 0x4f1c, 0xAD, 0x65, 0xE0, 0x52, 0x68, 0xD0, 0xB4, 0xD1 };
+EFI_GUID gIPxeFileGuid = { 0xB68653C7, 0xEEA1, 0x4435, { 0xA1, 0x99, 0xA4, 0x4F, 0x59, 0xE4, 0x47, 0x6C }};
 
 #define INTERNAL_UEFI_SHELL_NAME      L"Internal UEFI Shell 2.0"
 #define UEFI_HARD_DRIVE_NAME          L"UEFI Hard Drive"
@@ -518,19 +519,29 @@ RegisterDefaultBootOption (
   UINT16                             *ShellData;
   UINT32                             ShellDataSize; 
 
+  UINT16                             *iPxeData;
+  UINT32                             iPxeDataSize; 
   //
   // Shell.
   //
   if (1) {
     ShellData = NULL;
     ShellDataSize = 0;
-    RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME,  (UINTN) -1, LOAD_OPTION_ACTIVE, (UINT8 *)ShellData, ShellDataSize);
+    RegisterFvBootOption (&gUefiShellFileGuid, INTERNAL_UEFI_SHELL_NAME, (UINTN) -1, LOAD_OPTION_ACTIVE, (UINT8 *)ShellData, ShellDataSize);
   }
-  
+
+  //
+  // iPXE.
+  //
+  if (1) {
+    iPxeData = NULL;
+    iPxeDataSize = 0;
+    RegisterFvBootOption (&gIPxeFileGuid, L"iPXE Network Boot", (UINTN) -1, LOAD_OPTION_ACTIVE, (UINT8 *)iPxeData, iPxeDataSize);
+  }
   //
   // UiApp.
   //
-  mUiAppOptionNumber = RegisterFvBootOption (&mUiFile, L"Enter Setup",   (UINTN) -1, (LOAD_OPTION_CATEGORY_APP | LOAD_OPTION_ACTIVE | LOAD_OPTION_HIDDEN), NULL, 0);
+  mUiAppOptionNumber = RegisterFvBootOption (&mUiFile, L"Setup", (UINTN) -1, (LOAD_OPTION_CATEGORY_APP | LOAD_OPTION_ACTIVE | LOAD_OPTION_HIDDEN), NULL, 0);
   
   if (mUiAppOptionNumber == LoadOptionNumberUnassigned) {
     DEBUG ((DEBUG_ERROR, "UiAppOptionNumber (%d) should not be same to LoadOptionNumberUnassigned(%d).\n", mUiAppOptionNumber, LoadOptionNumberUnassigned));

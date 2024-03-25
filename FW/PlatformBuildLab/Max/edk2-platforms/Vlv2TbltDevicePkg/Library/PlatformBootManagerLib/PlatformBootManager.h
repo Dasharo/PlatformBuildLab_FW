@@ -36,6 +36,7 @@
 #include <Guid/GlobalVariable.h>
 #include <Guid/MemoryOverwriteControl.h>
 #include <Guid/FileInfo.h>
+#include <Guid/TtyTerm.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiBootServicesTableLib.h>

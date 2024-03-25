@@ -891,9 +891,9 @@ PlatformBootManagerBeforeConsole (
         //
         // Get default Terminal Type.
         //
-        TerminalGuid = &gEfiPcAnsiGuid;
+        TerminalGuid = &gEfiTtyTermGuid;
         TerminalType = PcdGet8 (PcdDefaultTerminalType);
-        if (TerminalType < 4) {
+        if (TerminalType < 5) {
           TerminalGuid = mLibTerminalType[TerminalType];
         }
 
@@ -977,7 +977,7 @@ IsNeedSortBootOption (
   // If setup is the first priority in boot option, we need to sort boot option.
   //
   if ((BootOptionCount > 1) &&
-      (((StrnCmp (BootOptions->Description, L"Enter Setup", StrLen (L"Enter Setup"))) == 0) ||
+      (((StrnCmp (BootOptions->Description, L"Setup", StrLen (L"Setup"))) == 0) ||
        ((StrnCmp (BootOptions->Description, L"BootManagerMenuApp", StrLen (L"BootManagerMenuApp"))) == 0))) {
     return TRUE;
   }
@@ -1067,4 +1067,9 @@ PlatformBootManagerAfterConsole (
   if (IsNeedSortBootOption()) {
     EfiBootManagerSortLoadOptionVariable (LoadOptionTypeBoot, (SORT_COMPARE)CompareBootOption);
   }
+
+
+  Print (L"F2   to enter Setup\n");
+  Print (L"F7   to enter Boot Manager Menu\n");
+  Print (L"ENTER to boot directly\n");
 }

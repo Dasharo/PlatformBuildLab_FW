@@ -2562,7 +2562,7 @@ ShowProgressHotKey (
   IN UINT16                       TimeoutDefault
   )
 {
-  CHAR16                        *TmpStr;
+
   UINT16                        TimeoutRemain;
   EFI_STATUS                    Status;
   EFI_INPUT_KEY                 Key;
@@ -2576,15 +2576,7 @@ ShowProgressHotKey (
   }
 
   gST->ConOut->SetAttribute(gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
-    
-  if (DebugAssertEnabled())
-  {
-    DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it, or press <F2> to enter setup page! ...Zzz....\n"));
-  }
-  else
-  {  
-    SerialPortWrite((UINT8 *)"\n\n>>>>Start boot option, Press <F2> to enter setup page(5 Sec)", 71);
-  } 
+
   SetMem (&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
   SetMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
   SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
@@ -2592,8 +2584,7 @@ ShowProgressHotKey (
   //
   // Clear the progress status bar first
   //
-  TmpStr = L"Start boot option, Press <F2> to enter setup page.";
-  PlatformBdsShowProgress (Foreground, Background, TmpStr, Color, 0, 0);
+  PlatformBdsShowProgress (Foreground, Background, L"", Color, 0, 0);
 
   TimeoutRemain = TimeoutDefault;
   while (TimeoutRemain != 0) {
@@ -2614,29 +2605,20 @@ ShowProgressHotKey (
     //
     // Show progress
     //
-    if (TmpStr != NULL) {
-      PlatformBdsShowProgress (
-        Foreground,
-        Background,
-        TmpStr,
-        Color,
-        ((TimeoutDefault - TimeoutRemain) * 100 / TimeoutDefault),
-        0
-        );
-    }
+    PlatformBdsShowProgress (
+      Foreground,
+      Background,
+      L"",
+      Color,
+      ((TimeoutDefault - TimeoutRemain) * 100 / TimeoutDefault),
+      0
+      );
   }
 
   //
   // Timeout expired
   //
   if (TimeoutRemain == 0) {
-    if (DebugAssertEnabled())
-	{
-	}
-    else
-    {	
-    SerialPortWrite ((UINT8 *)"\r\n", 2);
-    }
     return EFI_TIMEOUT;
   }
 
