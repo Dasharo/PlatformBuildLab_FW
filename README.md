@@ -31,29 +31,67 @@
 -->
 
 # PlatformBuildLab_FW
+
 Lab Material for Platform Build Lab - Currently MinnowBoard Max/ Turbot
-
-Copy the contents of the FW Directory to the other downloaded Training material
-
-
-To see the Slides with links to the presentations goto https://gitpitch.com/tianocore-training/Tianocore_Training_Contents/master#/
 
 ### PlatformBuildLab_FW will create a FW directory as follows:
 
 - **FW**
   - PlatformBuildLab
      - Max source code for the Minnowboard Max / Turbot V 1.00
-	 - 
 
 
-####  From Lab_Material_FW
+### Building for MinnowBoard Max / Turbot
 
-- **FW**
-  - Documentation
-  - DriverWizard
-  - edk2 - Same as https://github.com/tianocore/edk2 
-  - LabSampleCode
-  
-####  From Presentations_FW
-- **FW**
-  - Presentations   
+1. Navigate to firmware sources directory:
+
+    ```bash
+    cd FW/PlatformBuildLad/Max
+    ```
+
+2. Place the TXE v1.1.4.1145 Tools in the respective directories:
+    - TXEInfo and FPT for 32bit EFI in `silicon/Vlv2MiscBianies/Pkg/SEC/Ia32`
+      as `TXEInfo.efi` and `fpt.efi` respectively. FPT also requires the
+      `fparts.txt` file to be copied.
+    - TXEInfo and FPT for 64bit EFI in `silicon/Vlv2MiscBianies/Pkg/SEC/X64`
+      as `TXEInfo.efi` and `fpt.efi` respectively. FPT also requires the
+      `fparts.txt` file to be copied.
+3. Launch docker container:
+
+    ```bash
+    docker run --rm -it -w /home/edk2 -v $PWD:/home/edk2 3mdeb/edk2:1.1.0 /bin/bash
+    ```
+
+4. Inside the container navigate to `Vlv2TbltDevicePkg`:
+
+   ```bash
+   cd edk2-platforms/Vlv2TbltDevicePkg
+   ```
+
+5. Invoke the build:
+    - For 16MB flash release build:
+
+      ```bash
+      ./Build_IFWI.sh /16M /Q /x64 MNW2 Release
+      ```
+
+    - For 8MB flash release build:
+
+      ```bash
+      ./Build_IFWI.sh /Q /x64 MNW2 Release
+      ```
+
+    - For 16MB flash debug build:
+
+      ```bash
+      ./Build_IFWI.sh /16M /Q /x64 MNW2 Debug
+      ```
+
+    - For 8MB flash debug build:
+
+      ```bash
+      ./Build_IFWI.sh /Q /x64 MNW2 Debug
+      ```
+
+    > Remove `/Q` flag to disabel quiet build to get verbose information about
+    > errors, if encountered during build.
