@@ -591,6 +591,7 @@ INF Vlv2TbltDevicePkg/VlvPlatformInitDxe/VlvPlatformInitDxe.inf
   !if $(SEC_ENABLE) == TRUE
   INF  RuleOverride = BINARY $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/HeciDrv.inf
   INF  RuleOverride = BINARY $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/SeCPolicyInitDxe.inf
+  INF  $(PLATFORM_PACKAGE)/HeciOverrideDxe/HeciOverrideDxe.inf
   !endif
 !endif
 !if $(TPM_ENABLED) == TRUE

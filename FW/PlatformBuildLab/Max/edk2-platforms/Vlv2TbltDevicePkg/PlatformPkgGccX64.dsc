@@ -1390,13 +1390,21 @@ $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/IA32/fTPMInitPeim.inf
   $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/HeciDrv.inf {
 !if $(SEC_DEBUG_INFO_ENABLE) == TRUE
     <BuildOptions>
-      *_*_X64_CC_FLAGS      = /DSEC_DEBUG_INFO=1
+      *_*_X64_CC_FLAGS      = -D SEC_DEBUG_INFO=1
 !else
     <BuildOptions>
-      *_*_X64_CC_FLAGS      = /DSEC_DEBUG_INFO=0
+      *_*_X64_CC_FLAGS      = -D SEC_DEBUG_INFO=0
 !endif
   }
-  
+  $(PLATFORM_PACKAGE)/HeciOverrideDxe/HeciOverrideDxe.inf {
+  !if $(SEC_DEBUG_INFO_ENABLE) == TRUE
+    <BuildOptions>
+      *_*_X64_CC_FLAGS      = -D SEC_DEBUG_INFO=1
+  !else
+    <BuildOptions>
+      *_*_X64_CC_FLAGS      = -D SEC_DEBUG_INFO=0
+  !endif
+  }
   $(PLATFORM_BINARY_PACKAGE)/$(DXE_ARCHITECTURE)$(TARGET)/$(DXE_ARCHITECTURE)/SeCPolicyInitDxe.inf
 !endif
 

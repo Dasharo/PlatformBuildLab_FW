@@ -1,0 +1,66 @@
+## @file
+# This driver implement the EFI_FIRMWARE_VOLUMEN_PROTOCOL.
+#
+# Copyright (c) 2006  - 2014, Intel Corporation. All rights reserved.<BR>
+#                                                                                  
+
+# This program and the accompanying materials are licensed and made available under
+
+# the terms and conditions of the BSD License that accompanies this distribution.  
+
+# The full text of the license may be found at                                     
+
+# http://opensource.org/licenses/bsd-license.php.                                  
+
+#                                                                                  
+
+# THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,            
+
+# WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.    
+
+#                                                                                  
+
+#
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HeciOverrideDxe
+  FILE_GUID                      = 62FC58DD-9D9F-42B8-8378-3F8FB2F006CE
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = ReinstallHeciProtocol
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  HeciProtocol.h
+  HeciProtocol.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Vlv2TbltDevicePkg/PlatformPkg.dec
+  Vlv2DeviceRefCodePkg/Vlv2DeviceRefCodePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  IoLib
+  BaseMemoryLib
+  DebugLib
+  BaseLib
+  UefiLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gEfiHeciProtocolGuid                    # PROTOCOL CONSUMES AND PRODUCES
+
+[Depex]
+  gEfiHeciProtocolGuid
