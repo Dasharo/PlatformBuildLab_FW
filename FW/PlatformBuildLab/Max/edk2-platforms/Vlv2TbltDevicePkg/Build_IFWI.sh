@@ -126,22 +126,22 @@ if [ $Arch == "X64" ]; then
   fi
 
   if [ ! -f ../../ipxe/src/bin-x86_64-efi-sb/ipxe.efi ]; then
-    cd ../../ipxe || exit
-    git reset --hard HEAD || exit
-    git clean -df || exit
-    git checkout 77b07ea4fdc259d7253c6f9df2beda6e6c7a9d85 || exit
+    cd ../../ipxe || exit 1
+    git reset --hard HEAD || exit 1
+    git clean -df || exit 1
+    git checkout 77b07ea4fdc259d7253c6f9df2beda6e6c7a9d85 || exit 1
     if [ $CleanBuild == "1" ]; then
-      make clean || exit
+      make clean || exit 1
     fi
     sed -i 's|//#define\s*IMAGE_SCRIPT.*|#define IMAGE_SCRIPT|' "src/config/general.h"
     if [ ! -f dasharo.ipxe ]; then
-      wget http://raw.githubusercontent.com/Dasharo/dasharo-blobs/main/dasharo/dasharo.ipxe || exit
+      wget http://raw.githubusercontent.com/Dasharo/dasharo-blobs/main/dasharo/dasharo.ipxe || exit 1
     fi
     sed -i 's|.*DOWNLOAD_PROTO_HTTPS|#define DOWNLOAD_PROTO_HTTPS|g'  "src/config/general.h"
     make -C src bin-x86_64-efi-sb/ipxe.efi EMBED=$PWD/dasharo.ipxe BUILD_ID_CMD="echo 0x1234567890"
     if [ ! -f src/bin-x86_64-efi-sb/ipxe.efi ]; then
       echo "Failed to build ipxe"
-      exit
+      exit 1
     fi
     cd ../edk2-platforms/$PLATFORM_PACKAGE
   fi
